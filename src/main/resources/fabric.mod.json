@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "builtin-servers",
+  "id": "builtinservers",
   "version": "${version}",
   "name": "Builtin Servers",
   "description": "A small mod that lets modpack makers set up built-in servers instead of shipping a preconfigured server.dat file.",
@@ -8,10 +8,12 @@
     "D4rkness_King"
   ],
   "contact": {
-    "repo": "https://github.com/lucaargolo/builtin-servers"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/builtin-servers",
+    "sources": "https://github.com/lucaargolo/builtin-servers",
+    "issues": "https://github.com/lucaargolo/builtin-servers/issues"
   },
-  "license": "MPL-2.0",
-  "icon": "assets/builtin-servers/icon.png",
+  "license": "Mozilla Public License 2.0",
+  "icon": "assets/builtinservers/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
