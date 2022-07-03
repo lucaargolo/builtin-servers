@@ -167,7 +167,6 @@ modrinth {
 
     dependencies {
         required.project("fabric-api")
-        required.project("fabric-language-kotlin")
     }
 }
 tasks.modrinth.configure {
