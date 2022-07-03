@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +27,7 @@ public abstract class MixinMultiplayerScreen extends Screen {
         super(title);
     }
 
-    private static final Text builtinservers_FORCED_TOOLTIP = new TranslatableText("builtinservers.forced");
+    private static final Text builtinservers_FORCED_TOOLTIP = Text.translatable("builtinservers.forced");
     private final ButtonWidget.TooltipSupplier builtinservers_TOOLTIP_SUPPLIER = (ButtonWidget button, MatrixStack matrices, int mouseX, int mouseY) -> {
         MultiplayerServerListWidget.Entry entry = this.serverListWidget.getSelectedOrNull();
         if(entry instanceof MultiplayerServerListWidget.ServerEntry serverEntry) {

@@ -1,7 +1,6 @@
 package io.github.lucaargolo.builtinservers.mixin;
 
 import io.github.lucaargolo.builtinservers.BuiltinServers;
-import io.github.lucaargolo.builtinservers.ModConfig;
 import io.github.lucaargolo.builtinservers.mixed.MixedServerInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -9,7 +8,7 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,8 +28,8 @@ public class MixinServerEntry {
 
     @Shadow @Final private ServerInfo server;
 
-    private static final MutableText builtinservers_BADGE = new TranslatableText("builtinservers.badge");
-    private static final MutableText builtinservers_DESCRIPTION = new TranslatableText("builtinservers.description");
+    private static final MutableText builtinservers_BADGE = Text.translatable("builtinservers.badge");
+    private static final MutableText builtinservers_DESCRIPTION = Text.translatable("builtinservers.description");
 
 
     @Inject(at = @At("TAIL"), method = "render")

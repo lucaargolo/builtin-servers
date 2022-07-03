@@ -62,7 +62,7 @@ public class BuiltinServers implements ClientModInitializer {
             if(serverList.size() == 0) {
                 CONFIG.getBuiltinServers().forEach( serverConfig ->  {
                     ServerInfo builtinServer = new BuiltinServerInfo(serverConfig.getName(), serverConfig.getAddress(), serverConfig.isForced());
-                    serverList.add(builtinServer);
+                    serverList.add(builtinServer, false);
                 });
             }else{
                 List<ModConfig.ServerConfig> forcedConfigs = CONFIG.getBuiltinServers().stream().filter(ModConfig.ServerConfig::isForced).collect(Collectors.toList());
@@ -82,7 +82,7 @@ public class BuiltinServers implements ClientModInitializer {
                 forcedConfigs.removeAll(savedServers);
                 forcedConfigs.forEach(serverConfig -> {
                     ServerInfo builtinServer = new BuiltinServerInfo(serverConfig.getName(), serverConfig.getAddress(), true);
-                    serverList.add(builtinServer);
+                    serverList.add(builtinServer, false);
                 });
             }
             serverList.saveFile();
