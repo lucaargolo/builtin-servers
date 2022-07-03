@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.lucaargolo.builtinservers.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "AccessorButtonWidget",
+    "MixinMultiplayerScreen",
+    "MixinServerEntry",
+    "MixinServerInfo"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
