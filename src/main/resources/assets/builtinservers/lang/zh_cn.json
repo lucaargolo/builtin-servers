@@ -1,0 +1,5 @@
+{
+  "builtinservers.badge": "内置",
+  "builtinservers.description": "此服务器由模组包自动添加。",
+  "builtinservers.forced": "此服务器由模组包锁定，无法修改。"
+}
