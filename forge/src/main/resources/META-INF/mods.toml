@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[41,)"
+issueTrackerURL = "https://github.com/lucaargolo/builtin-servers/issues"
+license = "Mozilla Public License 2.0"
+
+[[mods]]
+modId = "builtinservers"
+version = "${version}"
+displayName = "Builtin Servers"
+authors = "D4rkness_King"
+description = '''
+A small mod that lets modpack makers set up built-in servers instead of shipping a preconfigured server.dat file.
+'''
+logoFile = "icon.png"
+displayURL = "https://github.com/lucaargolo/builtin-servers"
+
+[[dependencies.builtinservers]]
+modId = "forge"
+mandatory = true
+versionRange = "[41,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.builtinservers]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19,)"
+ordering = "NONE"
+side = "BOTH"

@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "id": "builtinservers",
+  "id": "examplemod",
   "version": "${version}",
-  "name": "Builtin Servers",
-  "description": "A small mod that lets modpack makers set up built-in servers instead of shipping a preconfigured server.dat file.",
+  "name": "Example Mod",
+  "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
-    "D4rkness_King"
+    "Me!"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/builtin-servers",
-    "sources": "https://github.com/lucaargolo/builtin-servers",
-    "issues": "https://github.com/lucaargolo/builtin-servers/issues"
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-  "license": "Mozilla Public License 2.0",
-  "icon": "assets/builtinservers/icon.png",
-  "environment": "client",
+  "license": "Insert License Here",
+  "icon": "assets/examplemod/icon.png",
+  "environment": "*",
   "entrypoints": {
-    "client": [
-      "io.github.lucaargolo.builtinservers.BuiltinServers"
+    "main": [
+      "net.examplemod.fabric.ExampleModFabric"
     ]
   },
   "mixins": [
-    "builtinservers.mixins.json"
+    "examplemod.mixins.json",
+    "examplemod-common.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.5",
     "fabric": "*",
-    "minecraft": "1.19.x"
+    "minecraft": ">=1.19.4",
+    "architectury": ">=8.1.79"
   }
 }
