@@ -95,12 +95,12 @@ subprojects {
     }
 
     val environment: Map<String, String> = System.getenv()
-    val releaseName = "${rootProject.name.split("-").joinToString(" ") { it.capitalize() }} ${project.name.capitalize()} ${(version as String).split("+")[0]}"
-    val releaseType = (version as String).split("+")[0].split("-").let { if(it.isNotEmpty()) if(it[1] == "BETA" || it[1] == "ALPHA") it[1] else "ALPHA" else "RELEASE" }
+    val releaseName = "${rootProject.name.split("-").joinToString(" ") { it.capitalize() }} ${(version as String).split("+")[0]}"
+    val releaseType = (version as String).split("+")[0].split("-").let { if(it.size > 1) if(it[1] == "BETA" || it[1] == "ALPHA") it[1] else "ALPHA" else "RELEASE" }
     val releaseFile = "${buildDir}/libs/${base.archivesName.get()}-${project.name}-${version}.jar"
     val cfGameVersion = (version as String).split("+")[1].let{ if(!rootProject["minecraft_version"].contains("-") && rootProject["minecraft_version"].startsWith(it)) rootProject["minecraft_version"] else "$it-Snapshot"}
 
-    fun Project.getReleaseType(): String = releaseType
+    fun getReleaseType(): String = releaseType
 
     fun getChangeLog(): String = "A changelog can be found at https://github.com/lucaargolo/${rootProject.name}/commits/"
 
@@ -129,12 +129,16 @@ subprojects {
                 val github = GitHub.connectUsingOAuth(environment["GITHUB_TOKEN"])
                 val repository = github.getRepository(environment["GITHUB_REPOSITORY"])
 
-                val releaseBuilder = GHReleaseBuilder(repository, version as String)
-                releaseBuilder.name(releaseName)
-                releaseBuilder.body(getChangeLog())
-                releaseBuilder.commitish(getBranch())
+                var ghRelease = repository.getReleaseByTagName(version as String)
+                if(ghRelease == null) {
 
-                val ghRelease = releaseBuilder.create()
+                    val releaseBuilder = GHReleaseBuilder(repository, version as String)
+                    releaseBuilder.name(releaseName)
+                    releaseBuilder.body(getChangeLog())
+                    releaseBuilder.commitish(getBranch())
+
+                    ghRelease = releaseBuilder.create()
+                }
                 ghRelease.uploadAsset(file(releaseFile), "application/java-archive")
             }
         }
@@ -146,16 +150,18 @@ subprojects {
             project(closureOf<CurseProject> {
                 id = project["curseforge_id"]
                 changelog = getChangeLog()
-                this.releaseType = this@subprojects.getReleaseType().toLowerCase()
+                this.releaseType = getReleaseType().toLowerCase()
                 addGameVersion(cfGameVersion)
-                addGameVersion("Fabric")
+                addGameVersion(project.name.capitalize())
 
-                mainArtifact(file(releaseFile), closureOf<CurseArtifact> {
-                    displayName = releaseName
-                    relations(closureOf<CurseRelation> {
-                        requiredDependency("fabric-api")
+                if(project.name.contains("fabric")) {
+                    mainArtifact(file(releaseFile), closureOf<CurseArtifact> {
+                        displayName = releaseName
+                        relations(closureOf<CurseRelation> {
+                            requiredDependency("fabric-api")
+                        })
                     })
-                })
+                }
 
                 afterEvaluate {
                     uploadTask.dependsOn("remapJar")
@@ -182,10 +188,12 @@ subprojects {
             uploadFile.set(tasks["remapJar"])
 
             gameVersions.add(project["minecraft_version"])
-            loaders.add("fabric")
+            loaders.add(project.name)
 
-            dependencies {
-                required.project("fabric-api")
+            if(project.name.contains("fabric")) {
+                dependencies {
+                    required.project("fabric-api")
+                }
             }
         }
         tasks.modrinth.configure {
