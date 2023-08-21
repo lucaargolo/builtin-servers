@@ -31,7 +31,6 @@ public class MixinServerEntry {
     private static final MutableText builtinservers_BADGE = Text.translatable("builtinservers.badge");
     private static final MutableText builtinservers_DESCRIPTION = Text.translatable("builtinservers.description");
 
-
     @Inject(at = @At("TAIL"), method = "render")
     public void bultinservers_injectBadge(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
         MixedServerInfo mixedServerInfo = (MixedServerInfo) this.server;
@@ -43,6 +42,4 @@ public class MixinServerEntry {
             }
         }
     }
-
-
 }
