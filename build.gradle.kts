@@ -187,7 +187,8 @@ subprojects {
             versionName.set(releaseName)
             versionType.set(releaseType.lowercase(Locale.getDefault()))
 
-            uploadFile.set(project.tasks["transformProduction${project.name.capitalizeFirstChar()}"])
+            //THIS NEEDS FIXING
+            uploadFile.set(releaseFile)
 
             gameVersions.add(project["minecraft_version"])
             loaders.add(project.name)
