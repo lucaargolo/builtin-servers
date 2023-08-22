@@ -5,6 +5,7 @@ import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseArtifact
 import com.matthewprenger.cursegradle.CurseRelation
 import com.matthewprenger.cursegradle.Options
+import java.util.*
 
 operator fun Project.get(property: String): String = property(property) as String
 
@@ -36,11 +37,6 @@ repositories {
 
 architectury {
     minecraft = rootProject["minecraft_version"]
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-    options.release.set(17)
 }
 
 allprojects {
@@ -99,15 +95,13 @@ subprojects {
         "mappings" ("net.fabricmc:yarn:${rootProject["yarn_mappings"]}:v2")
     }
 
+    fun String.capitalizeFirstChar(): String = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
     val environment: Map<String, String> = System.getenv()
-    val releaseName = "${rootProject.name.split("-").joinToString(" ") { it.capitalize() }} ${(version as String).split("+")[0]}"
+    val releaseName = "${rootProject.name.split("-").joinToString(" ") { it.capitalizeFirstChar() }} ${(version as String).split("+")[0]}"
     val releaseType = (version as String).split("+")[0].split("-").let { if(it.size > 1) if(it[1] == "BETA" || it[1] == "ALPHA") it[1] else "ALPHA" else "RELEASE" }
     val releaseFile = "${buildDir}/libs/${base.archivesName.get()}-${version}-${project.name}.jar"
     val cfGameVersion = (version as String).split("+")[1].let{ if(!rootProject["minecraft_version"].contains("-") && rootProject["minecraft_version"].startsWith(it)) rootProject["minecraft_version"] else "$it-Snapshot"}
-
-    println(System.getProperty("file.encoding"))
-
-    fun getReleaseType(): String = releaseType
 
     fun getChangeLog(): String = "A changelog can be found at https://github.com/lucaargolo/${rootProject.name}/commits/"
 
@@ -133,13 +127,14 @@ subprojects {
             onlyIf { environment.containsKey("GITHUB_TOKEN") }
 
             doLast {
-                val github = GitHub.connectUsingOAuth(environment["GITHUB_TOKEN"])
-                val repository = github.getRepository(environment["GITHUB_REPOSITORY"])
+                val gh = GitHub.connectUsingOAuth(environment["GITHUB_TOKEN"])
+                val ghRepo = gh.getRepository(environment["GITHUB_REPOSITORY"])
+                val ghTag = version.toString()
 
-                var ghRelease = repository.getReleaseByTagName(version as String)
+                var ghRelease = ghRepo.getReleaseByTagName(ghTag)
                 if(ghRelease == null) {
 
-                    val releaseBuilder = GHReleaseBuilder(repository, version as String)
+                    val releaseBuilder = GHReleaseBuilder(ghRepo, ghTag)
                     releaseBuilder.name(releaseName)
                     releaseBuilder.body(getChangeLog())
                     releaseBuilder.commitish(getBranch())
@@ -157,18 +152,18 @@ subprojects {
             project(closureOf<CurseProject> {
                 id = project["curseforge_id"]
                 changelog = getChangeLog()
-                this.releaseType = getReleaseType().toLowerCase()
+                this.releaseType = releaseType.lowercase(Locale.getDefault())
                 addGameVersion(cfGameVersion)
-                addGameVersion(project.name.capitalize())
+                addGameVersion(project.name.capitalizeFirstChar())
 
-                if(project.name.contains("fabric")) {
-                    mainArtifact(file(releaseFile), closureOf<CurseArtifact> {
-                        displayName = releaseName
+                mainArtifact(file(releaseFile), closureOf<CurseArtifact> {
+                    displayName = releaseName
+                    if(project.name.contains("fabric")) {
                         relations(closureOf<CurseRelation> {
                             requiredDependency("fabric-api")
                         })
-                    })
-                }
+                    }
+                })
 
                 afterEvaluate {
                     uploadTask.dependsOn("remapJar")
@@ -190,9 +185,9 @@ subprojects {
 
             versionNumber.set(version as String)
             versionName.set(releaseName)
-            versionType.set(releaseType.toLowerCase())
+            versionType.set(releaseType.lowercase(Locale.getDefault()))
 
-            uploadFile.set(tasks["remapJar"])
+            uploadFile.set(project.tasks["remapJar"])
 
             gameVersions.add(project["minecraft_version"])
             loaders.add(project.name)

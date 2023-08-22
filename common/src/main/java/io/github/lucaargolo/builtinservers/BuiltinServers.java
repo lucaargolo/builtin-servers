@@ -62,6 +62,7 @@ public class BuiltinServers {
 
     public static void onClientStarted(MinecraftClient client){
         ServerList serverList = new ServerList(client);
+        serverList.loadFile();
         if(serverList.size() == 0) {
             CONFIG.getBuiltinServers().forEach( serverConfig ->  {
                 ServerInfo builtinServer = new BuiltinServerInfo(serverConfig.getName(), serverConfig.getAddress(), serverConfig.isForced());
