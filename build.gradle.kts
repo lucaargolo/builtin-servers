@@ -97,7 +97,7 @@ subprojects {
     val environment: Map<String, String> = System.getenv()
     val releaseName = "${rootProject.name.split("-").joinToString(" ") { it.capitalize() }} ${(version as String).split("+")[0]}"
     val releaseType = (version as String).split("+")[0].split("-").let { if(it.size > 1) if(it[1] == "BETA" || it[1] == "ALPHA") it[1] else "ALPHA" else "RELEASE" }
-    val releaseFile = "${buildDir}/libs/${base.archivesName.get()}-${project.name}-${version}.jar"
+    val releaseFile = "${buildDir}/libs/${base.archivesName.get()}-${version}-${project.name}.jar"
     val cfGameVersion = (version as String).split("+")[1].let{ if(!rootProject["minecraft_version"].contains("-") && rootProject["minecraft_version"].startsWith(it)) rootProject["minecraft_version"] else "$it-Snapshot"}
 
     fun getReleaseType(): String = releaseType
