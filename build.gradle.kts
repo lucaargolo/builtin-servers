@@ -187,7 +187,7 @@ subprojects {
             versionName.set(releaseName)
             versionType.set(releaseType.lowercase(Locale.getDefault()))
 
-            uploadFile.set(project.tasks["remapJar"])
+            uploadFile.set(project.tasks[":${project.name}:remapJar"])
 
             gameVersions.add(project["minecraft_version"])
             loaders.add(project.name)
