@@ -128,17 +128,22 @@ subprojects {
             doLast {
                 val github = GitHub.connectUsingOAuth(environment["GITHUB_TOKEN"])
                 val repository = github.getRepository(environment["GITHUB_REPOSITORY"])
-
-                var ghRelease = repository.getReleaseByTagName(version as String)
+                val tag = version as String
+                println("trying to find github release with tag [$tag]")
+                var ghRelease = repository.getReleaseByTagName(tag)
                 if(ghRelease == null) {
-
+                    println("didn't find github release with tag [$tag], creating one")
                     val releaseBuilder = GHReleaseBuilder(repository, version as String)
                     releaseBuilder.name(releaseName)
                     releaseBuilder.body(getChangeLog())
                     releaseBuilder.commitish(getBranch())
 
                     ghRelease = releaseBuilder.create()
+                    println("github release with tag [$tag] created")
+                }else{
+                    println("found github release with tag [$tag]")
                 }
+                println("uploading file [$releaseFile] to github release with tag [$tag]")
                 ghRelease.uploadAsset(file(releaseFile), "application/java-archive")
             }
         }
