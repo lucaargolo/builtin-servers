@@ -1,4 +1,4 @@
-import org.ajoberstar.grgit.Grgit
+﻿import org.ajoberstar.grgit.Grgit
 import org.kohsuke.github.GitHub
 import org.kohsuke.github.GHReleaseBuilder
 import com.matthewprenger.cursegradle.CurseProject
@@ -38,6 +38,11 @@ architectury {
     minecraft = rootProject["minecraft_version"]
 }
 
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.release.set(17)
+}
+
 allprojects {
     apply {
         plugin("java")
@@ -57,7 +62,7 @@ allprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(17)//16
+        options.release.set(17)
     }
 
     extensions.configure<JavaPluginExtension> {
@@ -100,6 +105,8 @@ subprojects {
     val releaseFile = "${buildDir}/libs/${base.archivesName.get()}-${version}-${project.name}.jar"
     val cfGameVersion = (version as String).split("+")[1].let{ if(!rootProject["minecraft_version"].contains("-") && rootProject["minecraft_version"].startsWith(it)) rootProject["minecraft_version"] else "$it-Snapshot"}
 
+    println(System.getProperty("file.encoding"))
+
     fun getReleaseType(): String = releaseType
 
     fun getChangeLog(): String = "A changelog can be found at https://github.com/lucaargolo/${rootProject.name}/commits/"
@@ -128,22 +135,17 @@ subprojects {
             doLast {
                 val github = GitHub.connectUsingOAuth(environment["GITHUB_TOKEN"])
                 val repository = github.getRepository(environment["GITHUB_REPOSITORY"])
-                val tag = version as String
-                println("trying to find github release with tag [$tag]")
-                var ghRelease = repository.getReleaseByTagName(tag)
+
+                var ghRelease = repository.getReleaseByTagName(version as String)
                 if(ghRelease == null) {
-                    println("didn't find github release with tag [$tag], creating one")
+
                     val releaseBuilder = GHReleaseBuilder(repository, version as String)
                     releaseBuilder.name(releaseName)
                     releaseBuilder.body(getChangeLog())
                     releaseBuilder.commitish(getBranch())
 
                     ghRelease = releaseBuilder.create()
-                    println("github release with tag [$tag] created")
-                }else{
-                    println("found github release with tag [$tag]")
                 }
-                println("uploading file [$releaseFile] to github release with tag [$tag]")
                 ghRelease.uploadAsset(file(releaseFile), "application/java-archive")
             }
         }
